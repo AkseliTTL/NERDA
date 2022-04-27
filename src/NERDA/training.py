@@ -14,7 +14,7 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags):
     final_loss = 0.0
     writer = SummaryWriter()
     for dl in tqdm(data_loader, total=len(data_loader)):
-
+        range = 1
         optimizer.zero_grad()
         outputs = model(**dl)
         loss = compute_loss(outputs, 
@@ -26,7 +26,8 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags):
         optimizer.step()
         scheduler.step()
         final_loss += loss.item()
-        writer.add_scalar('Loss/train', final_loss, dl)
+        writer.add_scalar('Loss/train', loss.item(), range)
+        range += 1
         
 
     # Return average loss
