@@ -69,10 +69,8 @@ def compute_roc_auc_score(y_pred: List[List[str]],
     # this is needed if predictions have been truncated earlier in 
     # the flow.
     y_true = [t[:len(p)] for t, p in zip(y_true, y_pred)]
-    print("y_pred:", y_pred)
     y_pred = flatten(y_pred)
     y_true = flatten(y_true)
-    print("y_true flattenend:", y_true)
     roc_auc = roc_auc_score(y_true, y_pred, labels=labels, multi_class ='ovr')
 
     return roc_auc
