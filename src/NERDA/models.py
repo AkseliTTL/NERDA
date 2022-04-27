@@ -369,7 +369,7 @@ class NERDA:
         
         tags_predicted = self.predict(dataset.get('sentences'), 
                                       **kwargs)
-        print("'tags_predicted' length: ", len(tags_predicted))
+
         # compute F1 scores by entity type
         f1 = compute_f1_scores(y_pred = tags_predicted, 
                                y_true = dataset.get('tags'),
@@ -402,14 +402,14 @@ class NERDA:
                                  'Recall': [np.nan]})
         df = df.append(f1_macro)
 
-        # compute and return accuracy and or auroc if desired
         print("'tags' length: ", len(dataset.get('tags')))
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
             if return_auroc:
                 auroc = compute_roc_auc_score(y_pred = tags_predicted,
-                                            y_true = dataset.get('tags'))
+                                            y_true = dataset.get('tags'),
+                                            labels = self.tag_scheme)
                 return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
 
             return {'f1':df, 'accuracy': accuracy}

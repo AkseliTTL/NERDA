@@ -54,7 +54,8 @@ def compute_f1_scores(y_pred: List[List[str]],
     return f1_scores                                                                
 
 def compute_roc_auc_score(y_pred: List[List[str]], 
-                      y_true: List[List[str]], 
+                      y_true: List[List[str]],
+                      labels = List[str],
                       **kwargs) -> list:
     # check inputs.
     assert sum([len(t) < len(p) for t, p in zip(y_true, y_pred)]) == 0, "Length of predictions must not exceed length of observed values"
@@ -68,10 +69,10 @@ def compute_roc_auc_score(y_pred: List[List[str]],
     # this is needed if predictions have been truncated earlier in 
     # the flow.
     y_true = [t[:len(p)] for t, p in zip(y_true, y_pred)]
-    
+    print("y_pred:", y_pred)
     y_pred = flatten(y_pred)
     y_true = flatten(y_true)
+    print("y_true flattenend:", y_true)
+    roc_auc = roc_auc_score(y_true, y_pred, labels=labels, multi_class ='ovr')
 
-    roc_auc = roc_auc_score(y_true, y_pred, multi_class ='ovr')
-    
     return roc_auc
