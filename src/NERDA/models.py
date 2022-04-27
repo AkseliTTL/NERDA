@@ -415,8 +415,8 @@ class NERDA:
             return {'f1':df, 'accuracy': accuracy}
 
         if return_auroc:
-                auroc = compute_roc_auc_score(y_pred = flatten(tags_predicted),
-                                            y_true = flatten(dataset.get('tags')))
+                auroc = compute_roc_auc_score(y_pred = tags_predicted,
+                                            y_true = dataset.get('tags'))
                 return {'f1':df, 'auroc': auroc}
         
         return df

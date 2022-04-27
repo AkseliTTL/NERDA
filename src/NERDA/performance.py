@@ -71,9 +71,7 @@ def compute_roc_auc_score(y_pred: List[List[str]],
     
     y_pred = flatten(y_pred)
     y_true = flatten(y_true)
+
+    roc_auc = roc_auc_score(y_true, y_pred, multi_class ='ovr')
     
-    roc_auc = roc_auc_score(y_true = y_true, 
-                            y_pred = y_pred,
-                            multi_class ='ovr',
-                            **kwargs)
     return roc_auc
