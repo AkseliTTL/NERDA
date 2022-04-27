@@ -55,7 +55,6 @@ def compute_f1_scores(y_pred: List[List[str]],
 
 def compute_roc_auc_score(y_pred: List[List[str]], 
                       y_true: List[List[str]], 
-                      labels: List[str],
                       **kwargs) -> list:
     # check inputs.
     assert sum([len(t) < len(p) for t, p in zip(y_true, y_pred)]) == 0, "Length of predictions must not exceed length of observed values"

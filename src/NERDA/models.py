@@ -401,7 +401,7 @@ class NERDA:
                                  'Recall': [np.nan]})
         df = df.append(f1_macro)
 
-        # compute and return accuracy if desired
+        # compute and return accuracy and or auroc if desired
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
@@ -409,8 +409,13 @@ class NERDA:
                 auroc = compute_roc_auc_score(y_pred = flatten(tags_predicted),
                                             y_true = flatten(dataset.get('tags')))
                 return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
-                
+
             return {'f1':df, 'accuracy': accuracy}
 
+        if return_auroc:
+                auroc = compute_roc_auc_score(y_pred = flatten(tags_predicted),
+                                            y_true = flatten(dataset.get('tags')))
+                return {'f1':df, 'auroc': auroc}
+        
         return df
 
