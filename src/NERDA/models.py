@@ -12,7 +12,7 @@ The interface enables you to easily
 from NERDA.datasets import get_conll_data
 from NERDA.networks import NERDANetwork
 from NERDA.predictions import predict, predict_text
-from NERDA.performance import compute_f1_scores, flatten
+from NERDA.performance import compute_f1_scores, compute_roc_auc_score, flatten
 from NERDA.training import train_model
 import pandas as pd
 import numpy as np
@@ -341,6 +341,7 @@ class NERDA:
 
     def evaluate_performance(self, dataset: dict, 
                              return_accuracy: bool=False,
+                             return_auroc: bool=False,
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
@@ -404,7 +405,12 @@ class NERDA:
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
+            if return_auroc:
+                auroc = compute_roc_auc_score(y_pred = flatten(tags_predicted),
+                                            y_true = flatten(dataset.get('tags')))
+                return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
+                
             return {'f1':df, 'accuracy': accuracy}
-      
+
         return df
 
