@@ -26,10 +26,10 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags):
         optimizer.step()
         scheduler.step()
         final_loss += loss.item()
-        writer.add_scalar('Loss/train', float(loss.item()), range)
+        writer.add_scalar('Loss/train', np.random.random(), range)
         range += 1
         
-
+    writer.close()
     # Return average loss
     return final_loss / len(data_loader)
 
