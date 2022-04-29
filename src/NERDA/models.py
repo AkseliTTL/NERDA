@@ -372,7 +372,6 @@ class NERDA:
                                       **kwargs)
             
             sm = torch.nn.Softmax(dim=1)
-            print(sm(flatten(probs_predicted), dtype=float))
         else:
             tags_predicted = self.predict(dataset.get('sentences'), 
                                         **kwargs)
