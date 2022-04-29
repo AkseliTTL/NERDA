@@ -6,6 +6,7 @@ for [NERDA.models.NERDA][] models.
 from typing import List
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 import warnings
+import numpy as np
 
 def flatten(l: list):
     """Flattens list"""
@@ -69,8 +70,10 @@ def compute_roc_auc_score(y_pred: List[List[str]],
     # this is needed if predictions have been truncated earlier in 
     # the flow.
     y_true = [t[:len(p)] for t, p in zip(y_true, y_pred)]
-    y_pred = flatten(y_pred)
-    y_true = flatten(y_true)
+    #y_pred = flatten(y_pred)
+    #y_true = flatten(y_true)
+    print(np.shape(y_true))
+    print(np.shape(y_pred))
     roc_auc = roc_auc_score(y_true, y_pred, labels=labels, multi_class ='ovr')
 
     return roc_auc
