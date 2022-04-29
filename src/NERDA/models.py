@@ -367,7 +367,7 @@ class NERDA:
             True.
         """
         if return_auroc:
-            _,probs_predicted = self.predict(dataset.get('sentences'),
+            tags_predicted, probs_predicted = self.predict(dataset.get('sentences'),
                                         return_confidence=True,
                                       **kwargs)
         else:
