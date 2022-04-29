@@ -366,6 +366,7 @@ class NERDA:
             this AND accuracy, if return_accuracy is set to
             True.
         """
+        sm = torch.nn.Softmax(dim=1)
         if return_auroc:
             tags_predicted, probs_predicted = self.predict(dataset.get('sentences'),
                                         return_confidence=True,
@@ -413,7 +414,7 @@ class NERDA:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
             if return_auroc:
-                auroc = compute_roc_auc_score(y_pred = sm(np.asarray(flatten(probs_predicted, dtype=float))),
+                auroc = compute_roc_auc_score(y_pred = sm(torch.tensor(probs_predicted)),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
@@ -421,7 +422,7 @@ class NERDA:
             return {'f1':df, 'accuracy': accuracy}
 
         if return_auroc:
-                auroc = compute_roc_auc_score(y_pred = sm(np.asarray(flatten(probs_predicted, dtype=float))),
+                auroc = compute_roc_auc_score(y_pred = sm(torch.tensor(probs_predicted)),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'auroc': auroc}
