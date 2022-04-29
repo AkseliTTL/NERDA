@@ -367,7 +367,7 @@ class NERDA:
             True.
         """
         if return_auroc:
-            tags_predicted = self.predict(dataset.get('sentences'),
+            _,probs_predicted = self.predict(dataset.get('sentences'),
                                         return_confidence=True,
                                       **kwargs)
         else:
@@ -419,7 +419,7 @@ class NERDA:
             return {'f1':df, 'accuracy': accuracy}
 
         if return_auroc:
-                auroc = compute_roc_auc_score(y_pred = tags_predicted,
+                auroc = compute_roc_auc_score(y_pred = probs_predicted,
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'auroc': auroc}
