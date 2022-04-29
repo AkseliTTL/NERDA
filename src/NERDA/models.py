@@ -372,7 +372,7 @@ class NERDA:
                                       **kwargs)
             print(probs_predicted)
             sm = torch.nn.Softmax()
-            print(sm(probs_predicted))
+            print(sm(np.asarray(probs_predicted, dtype=float)))
         else:
             tags_predicted = self.predict(dataset.get('sentences'), 
                                         **kwargs)
@@ -414,7 +414,7 @@ class NERDA:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
             if return_auroc:
-                auroc = compute_roc_auc_score(y_pred = sm(probs_predicted),
+                auroc = compute_roc_auc_score(y_pred = sm(np.asarray(probs_predicted, dtype=float)),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
@@ -422,7 +422,7 @@ class NERDA:
             return {'f1':df, 'accuracy': accuracy}
 
         if return_auroc:
-                auroc = compute_roc_auc_score(y_pred = sm(probs_predicted),
+                auroc = compute_roc_auc_score(y_pred = sm(np.asarray(probs_predicted, dtype=float),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'auroc': auroc}
