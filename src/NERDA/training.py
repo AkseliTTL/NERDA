@@ -39,7 +39,8 @@ def validate(model, data_loader, device, n_tags):
 
     model.eval()
     final_loss = 0.0
-
+    items = 1
+    writer = SummaryWriter()
     for dl in tqdm(data_loader, total=len(data_loader)):
         
         outputs = model(**dl)
@@ -49,7 +50,10 @@ def validate(model, data_loader, device, n_tags):
                             device, 
                             n_tags)
         final_loss += loss.item()
-    
+        writer.add_scalar('Loss/validation', loss.item(), items)
+        items += 1
+    items = 0
+    writer.close()
     # Return average loss.
     return final_loss / len(data_loader)   
 
