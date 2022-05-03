@@ -54,6 +54,7 @@ def compute_f1_scores(y_pred: List[List[str]],
 
     return f1_scores                                                                
 
+#does not work yet
 def compute_roc_auc_score(y_pred: List[List[str]], 
                       y_true: List[List[str]],
                       labels = List[str],
@@ -66,16 +67,9 @@ def compute_roc_auc_score(y_pred: List[List[str]],
     if n_exceeds > 0:
         warnings.warn(f'length of observed values exceeded lengths of predicted values in {n_exceeds} cases and were truncated. _Consider_ increasing max_len parameter for your model.')
 
-    # truncate observed values dimensions to match predicted values,
-    # this is needed if predictions have been truncated earlier in 
-    # the flow.
     y_true = [t[:len(p)] for t, p in zip(y_true, y_pred)]
-    print(y_true)
-    print(np.shape(y_true))
     y_pred = flatten(y_pred)
     y_true = flatten(y_true)
-    print(np.shape(y_true))
-    print(np.shape(y_pred))
     roc_auc = roc_auc_score(y_true, y_pred, labels=labels, multi_class ='ovr')
 
     return roc_auc
