@@ -100,6 +100,7 @@ class NERDA:
                  max_len: int = 128,
                  network: torch.nn.Module = NERDANetwork,
                  dropout: float = 0.1,
+                 logger: bool = False,
                  hyperparameters: dict = {'epochs' : 4,
                                           'warmup_steps' : 500,
                                           'train_batch_size': 13,
@@ -182,7 +183,7 @@ class NERDA:
         self.valid_loss = np.nan
         self.quantized = False
         self.halved = False
-        self.logger = False
+        self.logger = logger
 
     def train(self) -> str:
         """Train Network
