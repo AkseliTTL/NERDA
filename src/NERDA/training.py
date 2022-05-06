@@ -7,15 +7,14 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-def train(model, data_loader, optimizer, device, scheduler, n_tags):
+def train(model, data_loader, optimizer, device, scheduler, n_tags, logger=False):
     """One Iteration of Training"""
 
     model.train()    
     final_loss = 0.0
-    items = 1
-    writer = SummaryWriter()
-    for dl in tqdm(data_loader, total=len(data_loader)):
-        
+    if logger:
+        writer = SummaryWriter()
+    for i, dl in enumerate(tqdm(data_loader, total=len(data_loader)), start=1):
         optimizer.zero_grad()
         outputs = model(**dl)
         loss = compute_loss(outputs, 
@@ -27,22 +26,22 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags):
         optimizer.step()
         scheduler.step()
         final_loss += loss.item()
-        writer.add_scalar('Loss/train', loss.item(), items)
-        items += 1
-    items = 0
-    writer.close()
+        if logger:
+            writer.add_scalar('Loss/train', loss.item(), i)
+    if logger:
+        writer.close()
     # Return average loss
     return final_loss / len(data_loader)
 
-def validate(model, data_loader, device, n_tags):
+def validate(model, data_loader, device, n_tags, logger=False):
     """One Iteration of Validation"""
 
     model.eval()
     final_loss = 0.0
-    items = 1
+    if logger:
+        writer = SummaryWriter()
     writer = SummaryWriter()
-    for dl in tqdm(data_loader, total=len(data_loader)):
-        
+    for i, dl in enumerate(tqdm(data_loader, total=len(data_loader)), start=1):
         outputs = model(**dl)
         loss = compute_loss(outputs, 
                             dl.get('target_tags'),
@@ -50,10 +49,10 @@ def validate(model, data_loader, device, n_tags):
                             device, 
                             n_tags)
         final_loss += loss.item()
-        writer.add_scalar('Loss/validation', loss.item(), items)
-        items += 1
-    items = 0
-    writer.close()
+        if logger:
+            writer.add_scalar('Loss/validation', loss.item(), i)
+    if logger:
+        writer.close()
     # Return average loss.
     return final_loss / len(data_loader)   
 
@@ -118,7 +117,8 @@ def train_model(network,
                 learning_rate = 5e-5,
                 device = None,
                 fixed_seed = 42,
-                num_workers = 1):
+                num_workers = 1,
+                logger=False):
     
     if fixed_seed is not None:
         enforce_reproducibility(fixed_seed)
@@ -157,17 +157,18 @@ def train_model(network,
 
     train_losses = []
     best_valid_loss = np.inf
-
+    writer = SummaryWriter()
     for epoch in range(epochs):
         
         print('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
 
-        train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags)
+        train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags, logger=logger)
         train_losses.append(train_loss)
-        valid_loss = validate(network, dl_validate, device, n_tags)
+        valid_loss = validate(network, dl_validate, device, n_tags, logger=logger)
 
         print(f"Train Loss = {train_loss} Valid Loss = {valid_loss}")
-
+        writer.add_scalar('Epoch Loss/train', train_loss, epoch + 1)
+        writer.add_scalar('Epoch Loss/valid', valid_loss, epoch + 1)
         if valid_loss < best_valid_loss:
             best_parameters = network.state_dict()            
             best_valid_loss = valid_loss

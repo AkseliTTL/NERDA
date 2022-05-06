@@ -182,6 +182,7 @@ class NERDA:
         self.valid_loss = np.nan
         self.quantized = False
         self.halved = False
+        self.logger = False
 
     def train(self) -> str:
         """Train Network
@@ -206,6 +207,7 @@ class NERDA:
                                                         max_len = self.max_len,
                                                         device = self.device,
                                                         num_workers = self.num_workers,
+                                                        logger = self.logger,
                                                         **self.hyperparameters)
         
         # attach as attributes to class
