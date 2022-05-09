@@ -41,7 +41,7 @@ def validate(model, data_loader, device, n_tags, logger=False):
     if logger:
         writer = SummaryWriter()
     writer = SummaryWriter()
-    for i, dl in enumerate(tqdm(data_loader, total=len(data_loader)), start=1):
+    for i, dl in enumerate(tqdm(data_loader, total=len(data_loader), mininterval=20), start=1):
         outputs = model(**dl)
         loss = compute_loss(outputs, 
                             dl.get('target_tags'),
