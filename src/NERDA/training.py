@@ -13,7 +13,7 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags, logger=False
     model.train()    
     final_loss = 0.0
     if logger:
-        writer = SummaryWriter('/train')
+        writer = SummaryWriter('/tb_logs/train')
     for i, dl in enumerate(tqdm(data_loader, total=len(data_loader)), start=1):
         optimizer.zero_grad()
         outputs = model(**dl)
@@ -39,7 +39,7 @@ def validate(model, data_loader, device, n_tags, logger=False):
     model.eval()
     final_loss = 0.0
     if logger:
-        writer = SummaryWriter('/val')
+        writer = SummaryWriter('/tb_logs/val')
     for i, dl in enumerate(tqdm(data_loader, total=len(data_loader), mininterval=20), start=1):
         outputs = model(**dl)
         loss = compute_loss(outputs, 
