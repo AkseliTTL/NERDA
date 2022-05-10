@@ -374,7 +374,7 @@ class NERDA:
         sm = torch.nn.Softmax(dim=1)
         if return_auroc:
             probs_predicted = self.predict(dataset.get('sentences'),
-                                        return_tensor=True,
+                                        return_tensors=True,
                                       **kwargs)
             
             sm = torch.nn.Softmax(dim=1)
