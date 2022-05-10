@@ -288,6 +288,7 @@ class NERDA:
 
     def predict(self, sentences: List[List[str]],
                 return_confidence: bool = False,
+                return_tensors: bool = False,
                 **kwargs) -> List[List[str]]:
         """Predict Named Entities in Word-Tokenized Sentences
 
@@ -314,6 +315,7 @@ class NERDA:
                        tag_encoder = self.tag_encoder,
                        tag_outside = self.tag_outside,
                        return_confidence = return_confidence,
+                       return_tensors = return_tensors,
                        **kwargs)
 
     def predict_text(self, text: str, 
@@ -371,8 +373,8 @@ class NERDA:
         """
         sm = torch.nn.Softmax(dim=1)
         if return_auroc:
-            tags_predicted, probs_predicted = self.predict(dataset.get('sentences'),
-                                        return_confidence=True,
+            probs_predicted = self.predict(dataset.get('sentences'),
+                                        return_tensor=True,
                                       **kwargs)
             
             sm = torch.nn.Softmax(dim=1)
@@ -412,7 +414,6 @@ class NERDA:
                                  'Recall': [np.nan]})
         df = df.append(f1_macro)
 
-        print("'predicted_tags': ", tags_predicted)
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
