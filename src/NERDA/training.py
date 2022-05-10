@@ -161,9 +161,9 @@ def train_model(network,
         
         print('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
 
-        train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags, epoch, logger=logger)
+        train_loss = train(network, dl_train, optimizer, device, scheduler, n_tags, epoch + 1, logger=logger)
         train_losses.append(train_loss)
-        valid_loss = validate(network, dl_validate, device, n_tags, epoch, logger=logger)
+        valid_loss = validate(network, dl_validate, device, n_tags, epoch + 1, logger=logger)
 
         print(f"Train Loss = {train_loss} Valid Loss = {valid_loss}")
         writer.add_scalar('Epoch Loss/train', train_loss, epoch + 1)
