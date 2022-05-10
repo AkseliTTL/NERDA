@@ -7,13 +7,13 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
-def train(model, data_loader, optimizer, device, scheduler, n_tags, logger=False):
+def train(model, data_loader, optimizer, device, scheduler, n_tags, epoch, logger=False):
     """One Iteration of Training"""
 
     model.train()    
     final_loss = 0.0
     if logger:
-        writer = SummaryWriter('/tb_logs/train')
+        writer = SummaryWriter(f'/tb_logs/epoch_{epoch}/train')
     for i, dl in enumerate(tqdm(data_loader, total=len(data_loader)), start=1):
         optimizer.zero_grad()
         outputs = model(**dl)
@@ -33,13 +33,13 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags, logger=False
     # Return average loss
     return final_loss / len(data_loader)
 
-def validate(model, data_loader, device, n_tags, logger=False):
+def validate(model, data_loader, device, n_tags, epoch, logger=False):
     """One Iteration of Validation"""
 
     model.eval()
     final_loss = 0.0
     if logger:
-        writer = SummaryWriter('/tb_logs/val')
+        writer = SummaryWriter(f'/tb_logs/epoch_{epoch}/val')
     for i, dl in enumerate(tqdm(data_loader, total=len(data_loader), mininterval=20), start=1):
         outputs = model(**dl)
         loss = compute_loss(outputs, 
