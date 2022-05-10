@@ -133,7 +133,7 @@ def predict(network: torch.nn.Module,
                 return predictions, probabilities
 
             if return_tensors:
-                return tensors
+                return predictions, tensors
 
     return predictions
 
