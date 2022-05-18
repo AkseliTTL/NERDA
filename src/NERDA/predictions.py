@@ -18,7 +18,6 @@ def sigmoid_transform(x):
 
 def predict(network: torch.nn.Module, 
             sentences: List[List[str]],
-            tags: List[List[str]],
             transformer_tokenizer: transformers.PreTrainedTokenizer,
             transformer_config: transformers.PretrainedConfig,
             max_len: int,
@@ -75,8 +74,6 @@ def predict(network: torch.nn.Module,
     # fill 'dummy' tags (expected input for dataloader).
     tag_fill = [tag_encoder.classes_[0]]
     tags_dummy = [tag_fill * len(sent) for sent in sentences]
-    if tags[0]:
-        tags_dummy = tags
     dl = create_dataloader(sentences = sentences,
                            tags = tags_dummy, 
                            transformer_tokenizer = transformer_tokenizer,
