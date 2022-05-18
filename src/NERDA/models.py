@@ -289,7 +289,6 @@ class NERDA:
     def predict(self, sentences: List[List[str]],
                 return_confidence: bool = False,
                 return_tensors: bool = False,
-                return_confusion: bool = False,
                 **kwargs) -> List[List[str]]:
         """Predict Named Entities in Word-Tokenized Sentences
 
@@ -316,7 +315,6 @@ class NERDA:
                        tag_encoder = self.tag_encoder,
                        tag_outside = self.tag_outside,
                        return_confidence = return_confidence,
-                       return_confusion = return_confusion,
                        return_tensors = return_tensors,
                        **kwargs)
 
