@@ -18,6 +18,7 @@ def sigmoid_transform(x):
 
 def predict(network: torch.nn.Module, 
             sentences: List[List[str]],
+            tags: List[List[str]],
             transformer_tokenizer: transformers.PreTrainedTokenizer,
             transformer_config: transformers.PretrainedConfig,
             max_len: int,
@@ -28,6 +29,7 @@ def predict(network: torch.nn.Module,
             num_workers: int = 1,
             return_tensors: bool = False,
             return_confidence: bool = False,
+            return_confusion: bool = False,
             pad_sequences: bool = True) -> List[List[str]]:
     """Compute predictions.
 
@@ -74,7 +76,8 @@ def predict(network: torch.nn.Module,
     # fill 'dummy' tags (expected input for dataloader).
     tag_fill = [tag_encoder.classes_[0]]
     tags_dummy = [tag_fill * len(sent) for sent in sentences]
-    
+    if tags[0]:
+        tags_dummy = tags
     dl = create_dataloader(sentences = sentences,
                            tags = tags_dummy, 
                            transformer_tokenizer = transformer_tokenizer,
@@ -105,9 +108,11 @@ def predict(network: torch.nn.Module,
                 
                 preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                 probs = values.cpu().numpy()
+                
+
 
                 if return_tensors:
-                    tensors.append(outputs)    
+                    tensors.append(preds)    
 
                 # subset predictions for original word tokens.
                 preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
@@ -127,7 +132,7 @@ def predict(network: torch.nn.Module,
                 # assert len(preds) == len(sentences[i])            
                 predictions.append(preds)
                 if return_confidence:
-                    probabilities.append(probs)
+                    probabilities.append(np.argmax(preds.predictions, axis=-1))
             
             if return_confidence:
                 return predictions, probabilities

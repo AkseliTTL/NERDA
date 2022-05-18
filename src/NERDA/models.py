@@ -289,6 +289,7 @@ class NERDA:
     def predict(self, sentences: List[List[str]],
                 return_confidence: bool = False,
                 return_tensors: bool = False,
+                return_confusion: bool = False,
                 **kwargs) -> List[List[str]]:
         """Predict Named Entities in Word-Tokenized Sentences
 
@@ -315,6 +316,7 @@ class NERDA:
                        tag_encoder = self.tag_encoder,
                        tag_outside = self.tag_outside,
                        return_confidence = return_confidence,
+                       return_confusion = return_confusion,
                        return_tensors = return_tensors,
                        **kwargs)
 
@@ -348,6 +350,7 @@ class NERDA:
     def evaluate_performance(self, dataset: dict, 
                              return_accuracy: bool=False,
                              return_auroc: bool=False,
+                             return_confusion: bool=False,
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
@@ -372,12 +375,20 @@ class NERDA:
             True.
         """
         sm = torch.nn.Softmax(dim=1)
+        y_pred = []
+        y_true = []
+
+        if return_confusion:
+            tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
+                                        tags=dataset.get('tags'),
+                                        return_tensors=True,
+                                      **kwargs)
         if return_auroc:
-            tags_predicted, probs_predicted = self.predict(dataset.get('sentences'),
+            tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
+                                        tags=dataset.get('tags'),
                                         return_tensors=True,
                                       **kwargs)
             
-            sm = torch.nn.Softmax(dim=1)
         else:
             tags_predicted = self.predict(dataset.get('sentences'), 
                                         **kwargs)
@@ -408,7 +419,7 @@ class NERDA:
                                      y_true = dataset.get('tags'),
                                      labels = self.tag_scheme,
                                      average = 'macro')
-        f1_macro = pd.DataFrame({'Level' : ['AVG_MICRO'], 
+        f1_macro = pd.DataFrame({'Level' : ['AVG_MACRO'], 
                                  'F1-Score': [f1_macro[2]],
                                  'Precision': [np.nan],
                                  'Recall': [np.nan]})
