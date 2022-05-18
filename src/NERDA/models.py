@@ -381,8 +381,9 @@ class NERDA:
         if return_confusion:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         tags=dataset.get('tags'),
-                                        return_tensors=True,
+                                        return_confidence=True,
                                       **kwargs)
+            print(probs_predicted)
         if return_auroc:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         tags=dataset.get('tags'),

@@ -29,7 +29,6 @@ def predict(network: torch.nn.Module,
             num_workers: int = 1,
             return_tensors: bool = False,
             return_confidence: bool = False,
-            return_confusion: bool = False,
             pad_sequences: bool = True) -> List[List[str]]:
     """Compute predictions.
 
