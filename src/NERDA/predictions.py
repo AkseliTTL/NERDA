@@ -134,11 +134,11 @@ def predict(network: torch.nn.Module,
                 if return_confidence:
                     probabilities.append(np.argmax(preds, axis=-1))
             
-            if return_confidence:
-                return predictions_all, probabilities
+    if return_confidence:
+        return predictions_all, probabilities
 
-            if return_tensors:
-                return predictions, tensors
+    if return_tensors:
+        return predictions, tensors
 
     return predictions
 
