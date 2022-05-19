@@ -132,7 +132,7 @@ def predict(network: torch.nn.Module,
                 # assert len(preds) == len(sentences[i])            
                 predictions.append(preds)
                 if return_confidence:
-                    probabilities.append(np.argmax(preds, axis=-1))
+                    probabilities.append(np.argmax(values.cpu().numpy(), axis=-1))
             
     if return_confidence:
         return predictions_all, probabilities
