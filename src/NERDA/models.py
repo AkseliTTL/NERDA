@@ -381,8 +381,7 @@ class NERDA:
         if return_confusion:
             tags_predicted = self.predict(sentences=dataset.get('sentences'),
                                       **kwargs)
-            print(len(y_true), len(tags_predicted))
-            cm = confusion_matrix(y_true, tags_predicted, labels = self.tag_scheme)
+            cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = self.tag_scheme)
             return cm
         if return_auroc:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
