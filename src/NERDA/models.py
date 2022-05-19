@@ -377,13 +377,12 @@ class NERDA:
         y_true = dataset.get('tags')
         print(y_true)
         mlb_y_true = MultiLabelBinarizer().fit_transform(y_true)
-        print(mlb_y_true)
 
         if return_confusion:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         return_confidence=True,
                                       **kwargs)
-            cm = confusion_matrix(y_true, probs_predicted)
+            cm = confusion_matrix(mlb_y_true, probs_predicted)
             return cm
         if return_auroc:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
