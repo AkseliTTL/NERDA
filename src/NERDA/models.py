@@ -21,7 +21,7 @@ import torch
 import os
 import sys
 import sklearn.preprocessing
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix
 from transformers import AutoModel, AutoTokenizer, AutoConfig
 from typing import List
 
@@ -348,6 +348,7 @@ class NERDA:
     def evaluate_performance(self, dataset: dict, 
                              return_accuracy: bool=False,
                              return_auroc: bool=False,
+                             return_confusion: bool=False,
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
@@ -372,13 +373,21 @@ class NERDA:
             True.
         """
         sm = torch.nn.Softmax(dim=1)
+        y_pred = []
+        y_true = [dataset.get('tags')]
+
+        if return_confusion:
+            tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
+                                        return_confidence=True,
+                                      **kwargs)
+            print(probs_predicted)
+            cm = confusion_matrix(y_true, probs_predicted, labels=y_true.unique())
+            return cm
         if return_auroc:
-            tags_predicted, probs_predicted = self.predict(dataset.get('sentences'),
+            tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         return_tensors=True,
                                       **kwargs)
             
-            sm = torch.nn.Softmax(dim=1)
-            print(sm(probs_predicted))
         else:
             tags_predicted = self.predict(dataset.get('sentences'), 
                                         **kwargs)
@@ -409,7 +418,7 @@ class NERDA:
                                      y_true = dataset.get('tags'),
                                      labels = self.tag_scheme,
                                      average = 'macro')
-        f1_macro = pd.DataFrame({'Level' : ['AVG_MICRO'], 
+        f1_macro = pd.DataFrame({'Level' : ['AVG_MACRO'], 
                                  'F1-Score': [f1_macro[2]],
                                  'Precision': [np.nan],
                                  'Recall': [np.nan]})

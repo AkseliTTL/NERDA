@@ -74,7 +74,6 @@ def predict(network: torch.nn.Module,
     # fill 'dummy' tags (expected input for dataloader).
     tag_fill = [tag_encoder.classes_[0]]
     tags_dummy = [tag_fill * len(sent) for sent in sentences]
-    
     dl = create_dataloader(sentences = sentences,
                            tags = tags_dummy, 
                            transformer_tokenizer = transformer_tokenizer,
@@ -87,6 +86,7 @@ def predict(network: torch.nn.Module,
                            pad_sequences = pad_sequences)
 
     predictions = []
+    predictions_all = []
     probabilities = []
     tensors = []
     
@@ -105,9 +105,14 @@ def predict(network: torch.nn.Module,
                 
                 preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                 probs = values.cpu().numpy()
+                
+
 
                 if return_tensors:
-                    tensors.append(outputs)    
+                    tensors.append(preds)    
+
+                if return_confidence:
+                    predictions_all.append(preds)
 
                 # subset predictions for original word tokens.
                 preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
@@ -127,10 +132,10 @@ def predict(network: torch.nn.Module,
                 # assert len(preds) == len(sentences[i])            
                 predictions.append(preds)
                 if return_confidence:
-                    probabilities.append(probs)
+                    probabilities.append(np.argmax(preds.predictions, axis=-1))
             
             if return_confidence:
-                return predictions, probabilities
+                return predictions_all, probabilities
 
             if return_tensors:
                 return predictions, tensors
