@@ -9,6 +9,7 @@ The interface enables you to easily
 - evaluate it
 - use it to predict entities in new texts.
 """
+from locale import normalize
 from tracemalloc import take_snapshot
 from NERDA.datasets import get_conll_data
 from NERDA.networks import NERDANetwork
@@ -381,7 +382,7 @@ class NERDA:
         if return_confusion:
             tags_predicted = self.predict(sentences=dataset.get('sentences'),
                                       **kwargs)
-            cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = self.tag_scheme)
+            cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = self.tag_scheme, normalize='all')
             return cm
         if return_auroc:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
