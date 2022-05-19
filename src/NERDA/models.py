@@ -375,16 +375,14 @@ class NERDA:
         """
         sm = torch.nn.Softmax(dim=1)
         y_true = dataset.get('tags')
-        print(y_true)
-        mlb_y_true = MultiLabelBinarizer().fit_transform(y_true)
+        
+
 
         if return_confusion:
-            tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
-                                        return_confidence=True,
+            tags_predicted = self.predict(sentences=dataset.get('sentences'),
                                       **kwargs)
-            print(mlb_y_true)
-            print(tags_predicted)
-            cm = confusion_matrix(mlb_y_true, probs_predicted, labels = self.tag_scheme)
+            print(len(y_true), len(tags_predicted))
+            cm = confusion_matrix(y_true, tags_predicted, labels = self.tag_scheme)
             return cm
         if return_auroc:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
