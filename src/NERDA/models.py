@@ -374,13 +374,12 @@ class NERDA:
         """
         sm = torch.nn.Softmax(dim=1)
         y_pred = []
-        y_true = [dataset.get('tags')]
+        y_true = dataset.get('tags')
 
         if return_confusion:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         return_confidence=True,
                                       **kwargs)
-            print(probs_predicted)
             cm = confusion_matrix(y_true, probs_predicted)
             return cm
         if return_auroc:
