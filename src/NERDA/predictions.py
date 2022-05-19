@@ -86,6 +86,7 @@ def predict(network: torch.nn.Module,
                            pad_sequences = pad_sequences)
 
     predictions = []
+    predictions_all = []
     probabilities = []
     tensors = []
     
@@ -110,6 +111,9 @@ def predict(network: torch.nn.Module,
                 if return_tensors:
                     tensors.append(preds)    
 
+                if return_confidence:
+                    predictions_all.append(preds)
+
                 # subset predictions for original word tokens.
                 preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
                 if return_confidence:
@@ -131,7 +135,7 @@ def predict(network: torch.nn.Module,
                     probabilities.append(np.argmax(preds.predictions, axis=-1))
             
             if return_confidence:
-                return predictions, probabilities
+                return predictions_all, probabilities
 
             if return_tensors:
                 return predictions, tensors
