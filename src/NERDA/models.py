@@ -21,6 +21,7 @@ import torch
 import os
 import sys
 import sklearn.preprocessing
+from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import accuracy_score, confusion_matrix
 from transformers import AutoModel, AutoTokenizer, AutoConfig
 from typing import List
@@ -373,8 +374,10 @@ class NERDA:
             True.
         """
         sm = torch.nn.Softmax(dim=1)
-        y_pred = []
         y_true = dataset.get('tags')
+        print(y_true)
+        mlb_y_true = MultiLabelBinarizer().fit_transform(y_true)
+        print(mlb_y_true)
 
         if return_confusion:
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
