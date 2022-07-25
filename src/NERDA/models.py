@@ -390,8 +390,9 @@ class NERDA:
             '''
             
             tags_predicted = self.predict(sentences=dataset.get('sentences'),
+                                        return_tensors=True,
                                       **kwargs)
-            probs = torch.nn.functional.softmax(tags_predicted, dim=1).detach().cpu().numpy()
+            probs = torch.nn.functional.softmax(torch.tensor(tags_predicted), dim=1).detach().cpu().numpy()
             return probs
             
         else:
