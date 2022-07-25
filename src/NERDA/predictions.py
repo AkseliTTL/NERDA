@@ -106,7 +106,7 @@ def predict(network: torch.nn.Module,
                 preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                 probs = values.cpu().numpy()
 
-                todennäköisyydet, indices = outputs[i]
+                todennäköisyydet = outputs[i]
 
 
 
