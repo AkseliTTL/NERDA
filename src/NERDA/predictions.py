@@ -106,12 +106,12 @@ def predict(network: torch.nn.Module,
                 preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                 probs = values.cpu().numpy()
 
-                todennäköisyydet = outputs[i]
+                todennäköisyydet = outputs[i].cpu().numpy()
 
 
 
                 if return_tensors:
-                    return todennäköisyydet    
+                    predictions_all.append(preds)   
 
                 if return_confidence:
                     predictions_all.append(preds)
@@ -119,13 +119,16 @@ def predict(network: torch.nn.Module,
                 # subset predictions for original word tokens.
                 preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
                 if return_confidence:
-                    probs = [prob for prob, offset in zip(probs.tolist(), dl.get('offsets')[i]) if offset]
+                    probs = [prob for prob, offset in zip(todennäköisyydet.tolist(), dl.get('offsets')[i]) if offset]
+                if return_tensors:
+                    probs = [prob for prob, offset in zip(todennäköisyydet.tolist(), dl.get('offsets')[i]) if offset]
             
                 # Remove special tokens ('CLS' + 'SEP').
                 preds = preds[1:-1]
                 if return_confidence:
                     probs = probs[1:-1]
-            
+                if return_tensors:
+                    probs = probs[1:-1]
                 # make sure resulting predictions have same length as
                 # original sentence.
             
@@ -134,13 +137,13 @@ def predict(network: torch.nn.Module,
                 # assert len(preds) == len(sentences[i])            
                 predictions.append(preds)
                 if return_confidence:
-                    probabilities.append(np.argmax(values.cpu().numpy(), axis=-1))
+                    probabilities.append(probs)
             
     if return_confidence:
         return predictions_all, probabilities
 
     if return_tensors:
-        return predictions, tensors
+        return predictions_all, probabilities
 
     return predictions
 

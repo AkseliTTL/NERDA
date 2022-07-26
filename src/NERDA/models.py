@@ -349,8 +349,8 @@ class NERDA:
 
     def evaluate_performance(self, dataset: dict, 
                              return_accuracy: bool=False,
-                             return_auroc: bool=False,
                              return_confusion: bool=False,
+                             return_prob_distr: bool=False,
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
@@ -382,7 +382,7 @@ class NERDA:
                                       **kwargs)
             cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = self.tag_scheme, normalize='true')
             return cm
-        if return_auroc:
+        if return_prob_distr:
             '''
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         return_tensors=True,
@@ -434,19 +434,23 @@ class NERDA:
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
+            return {'f1':df, 'accuracy': accuracy}
+        '''
             if return_auroc:
                 auroc = compute_roc_auc_score(y_pred = sm(probs_predicted),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
+        '''
 
-            return {'f1':df, 'accuracy': accuracy}
-
+            
+        '''
         if return_auroc:
                 auroc = compute_roc_auc_score(y_pred = sm(probs_predicted),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'auroc': auroc}
+        '''
         
         return df
 
