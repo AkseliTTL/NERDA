@@ -9,6 +9,7 @@ The interface enables you to easily
 - evaluate it
 - use it to predict entities in new texts.
 """
+from locale import normalize
 from tracemalloc import take_snapshot
 from NERDA.datasets import get_conll_data
 from NERDA.networks import NERDANetwork
@@ -21,6 +22,7 @@ import torch
 import os
 import sys
 import sklearn.preprocessing
+from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import accuracy_score, confusion_matrix
 from transformers import AutoModel, AutoTokenizer, AutoConfig
 from typing import List
@@ -347,8 +349,8 @@ class NERDA:
 
     def evaluate_performance(self, dataset: dict, 
                              return_accuracy: bool=False,
-                             return_auroc: bool=False,
                              return_confusion: bool=False,
+                             return_prob_distr: bool=False,
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
@@ -373,20 +375,25 @@ class NERDA:
             True.
         """
         sm = torch.nn.Softmax(dim=1)
-        y_pred = []
-        y_true = [dataset.get('tags')]
+        y_true = dataset.get('tags')
 
         if return_confusion:
-            tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
-                                        return_confidence=True,
+            tags_predicted = self.predict(sentences=dataset.get('sentences'),
                                       **kwargs)
-            print(probs_predicted)
-            cm = confusion_matrix(y_true, probs_predicted, labels=y_true.unique())
+            cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = self.tag_scheme, normalize='true')
             return cm
-        if return_auroc:
+        if return_prob_distr:
+            '''
             tags_predicted, probs_predicted = self.predict(sentences=dataset.get('sentences'),
                                         return_tensors=True,
                                       **kwargs)
+            '''
+            
+            tags_predicted, probabilities = self.predict(sentences=dataset.get('sentences'),
+                                        return_tensors=True,
+                                      **kwargs)
+            probs = torch.nn.functional.softmax(torch.tensor(probabilities), dim=1).detach().cpu().numpy()
+            return tags_predicted, probs
             
         else:
             tags_predicted = self.predict(dataset.get('sentences'), 
@@ -427,19 +434,23 @@ class NERDA:
         if return_accuracy:
             accuracy = accuracy_score(y_pred = flatten(tags_predicted), 
                                       y_true = flatten(dataset.get('tags')))
+            return {'f1':df, 'accuracy': accuracy}
+        '''
             if return_auroc:
                 auroc = compute_roc_auc_score(y_pred = sm(probs_predicted),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'accuracy': accuracy, 'auroc': auroc}
+        '''
 
-            return {'f1':df, 'accuracy': accuracy}
-
+            
+        '''
         if return_auroc:
                 auroc = compute_roc_auc_score(y_pred = sm(probs_predicted),
                                             y_true = dataset.get('tags'),
                                             labels = self.tag_scheme)
                 return {'f1':df, 'auroc': auroc}
+        '''
         
         return df
 

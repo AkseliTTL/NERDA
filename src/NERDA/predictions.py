@@ -105,11 +105,14 @@ def predict(network: torch.nn.Module,
                 
                 preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                 probs = values.cpu().numpy()
-                
+
+                todennäköisyydet = outputs[i].cpu().numpy()
+
 
 
                 if return_tensors:
-                    tensors.append(preds)    
+                    preds = tag_encoder.inverse_transform(indices.cpu().numpy())
+                    predictions_all.append(preds)   
 
                 if return_confidence:
                     predictions_all.append(preds)
@@ -118,12 +121,15 @@ def predict(network: torch.nn.Module,
                 preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
                 if return_confidence:
                     probs = [prob for prob, offset in zip(probs.tolist(), dl.get('offsets')[i]) if offset]
+                if return_tensors:
+                    probs = [prob for prob, offset in zip(todennäköisyydet.tolist(), dl.get('offsets')[i]) if offset]
             
                 # Remove special tokens ('CLS' + 'SEP').
                 preds = preds[1:-1]
                 if return_confidence:
                     probs = probs[1:-1]
-            
+                if return_tensors:
+                    probs = probs[1:-1]
                 # make sure resulting predictions have same length as
                 # original sentence.
             
@@ -132,13 +138,15 @@ def predict(network: torch.nn.Module,
                 # assert len(preds) == len(sentences[i])            
                 predictions.append(preds)
                 if return_confidence:
-                    probabilities.append(np.argmax(preds, axis=-1))
+                    probabilities.append(np.argmax(probs, axis=-1))
+                if return_tensors:
+                    probabilities.append(probs)
             
-            if return_confidence:
-                return predictions_all, probabilities
+    if return_confidence:
+        return predictions_all, probabilities
 
-            if return_tensors:
-                return predictions, tensors
+    if return_tensors:
+        return predictions, probabilities
 
     return predictions
 
