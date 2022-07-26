@@ -111,6 +111,7 @@ def predict(network: torch.nn.Module,
 
 
                 if return_tensors:
+                    preds = tag_encoder.inverse_transform(todennäköisyydet)
                     predictions_all.append(preds)   
 
                 if return_confidence:
@@ -119,7 +120,7 @@ def predict(network: torch.nn.Module,
                 # subset predictions for original word tokens.
                 preds = [prediction for prediction, offset in zip(preds.tolist(), dl.get('offsets')[i]) if offset]
                 if return_confidence:
-                    probs = [prob for prob, offset in zip(todennäköisyydet.tolist(), dl.get('offsets')[i]) if offset]
+                    probs = [prob for prob, offset in zip(probs.tolist(), dl.get('offsets')[i]) if offset]
                 if return_tensors:
                     probs = [prob for prob, offset in zip(todennäköisyydet.tolist(), dl.get('offsets')[i]) if offset]
             
@@ -137,6 +138,8 @@ def predict(network: torch.nn.Module,
                 # assert len(preds) == len(sentences[i])            
                 predictions.append(preds)
                 if return_confidence:
+                    probabilities.append(probs)
+                if return_tensors:
                     probabilities.append(probs)
             
     if return_confidence:
