@@ -111,7 +111,6 @@ def predict(network: torch.nn.Module,
 
 
                 if return_tensors:
-                    preds = tag_encoder.inverse_transform(indices.cpu().numpy())
                     predictions_all.append(preds)   
 
                 if return_confidence:
@@ -162,6 +161,7 @@ def predict_text(network: torch.nn.Module,
                  num_workers: int = 1,
                  pad_sequences: bool = True,
                  return_confidence: bool = False,
+                 return_tensors: bool = False,
                  sent_tokenize: Callable = sent_tokenize,
                  word_tokenize: Callable = word_tokenize) -> tuple:
     """Compute Predictions for Text.
@@ -200,6 +200,22 @@ def predict_text(network: torch.nn.Module,
     sentences = sent_tokenize(text)
 
     sentences = [word_tokenize(sentence) for sentence in sentences]
+
+    if return_tensors:
+        predictions, probs = predict(network = network, 
+                          sentences = sentences,
+                          transformer_tokenizer = transformer_tokenizer,
+                          transformer_config = transformer_config,
+                          max_len = max_len,
+                          device = device,
+                          return_confidence = return_confidence,
+                          batch_size = batch_size,
+                          num_workers = num_workers,
+                          pad_sequences = pad_sequences,
+                          return_tensors = return_tensors,
+                          tag_encoder = tag_encoder,
+                          tag_outside = tag_outside)
+        return sentences, predictions, probs
 
     predictions = predict(network = network, 
                           sentences = sentences,

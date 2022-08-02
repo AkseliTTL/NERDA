@@ -321,7 +321,9 @@ class NERDA:
                        **kwargs)
 
     def predict_text(self, text: str, 
-                     return_confidence:bool = False, **kwargs) -> list:
+                     return_confidence:bool = False, 
+                     return_tensors:bool = False,
+                     **kwargs) -> list:
         """Predict Named Entities in a Text
 
         Args:
@@ -345,6 +347,7 @@ class NERDA:
                             tag_encoder = self.tag_encoder,
                             tag_outside = self.tag_outside,
                             return_confidence=return_confidence,
+                            return_tensors = return_tensors,
                             **kwargs)
 
     def evaluate_performance(self, dataset: dict, 
