@@ -190,16 +190,16 @@ def predict_arrays(network: torch.nn.Module,
     flat_list = [item for sublist in predictions for item in sublist]
     #predictions = [' '.join(flat_list[i+sent_lens[i-1]:i+e]) if e > 1 and i > 0 else ' '.join(flat_list[i:i+e]) if e > 1 and i == 0 else flat_list[i] for i, e in enumerate(sent_lens)]
     last = 0
-    num_of = -1
+    num_of = 0
     counter = 0
     final = []
-
     for row in part_lens:
         for i in range(row):
-            num_of += sent_lens[counter+i]
+            #print(counter+i, ' | ', counter, i)
+            num_of += sent_lens[counter]
             counter += 1
-        final.append(' '.join(flat_list[last:num_of]))
-        last = num_of
+        final.append(' '.join(flat_list[last:counter]))
+        last = counter
 
     return output, final
 
