@@ -149,6 +149,43 @@ def predict(network: torch.nn.Module,
 
     return predictions
 
+def predict_arrays(network: torch.nn.Module, 
+                 sentences: List[List[str]],
+                 transformer_tokenizer: transformers.PreTrainedTokenizer,
+                 transformer_config: transformers.PretrainedConfig,
+                 max_len: int,
+                 device: str,
+                 tag_encoder: sklearn.preprocessing.LabelEncoder,
+                 tag_outside: str,
+                 batch_size: int = 8,
+                 num_workers: int = 1,
+                 pad_sequences: bool = True,
+                 return_confidence: bool = False,
+                 return_tensors: bool = False,
+                 sent_tokenize: Callable = sent_tokenize,
+                 word_tokenize: Callable = word_tokenize) -> tuple:
+
+    a = [sent_tokenize(sentence) for sentence in sentences]
+    part_lens = [len(i) for i in a]
+    flat_list = [item for sublist in a for item in sublist]
+    sentences = [word_tokenize(sentence) for sentence in flat_list]
+    output = [' '.join(flat_list[i:i+e]) if i > e else flat_list[i] for i, e in enumerate(part_lens)]
+    
+    predictions = predict(network = network, 
+                          sentences = sentences,
+                          transformer_tokenizer = transformer_tokenizer,
+                          transformer_config = transformer_config,
+                          max_len = max_len,
+                          device = device,
+                          return_confidence = return_confidence,
+                          batch_size = batch_size,
+                          num_workers = num_workers,
+                          pad_sequences = pad_sequences,
+                          tag_encoder = tag_encoder,
+                          tag_outside = tag_outside)
+
+    return output, predictions
+
 def predict_text(network: torch.nn.Module, 
                  text: str,
                  transformer_tokenizer: transformers.PreTrainedTokenizer,
