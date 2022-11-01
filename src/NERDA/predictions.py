@@ -175,12 +175,12 @@ def predict_arrays(network: torch.nn.Module,
     last = 0
     monta = 0
     counter = 0
-    final = []
+    output = []
     for row in part_lens:
         for i in range(row):
             monta += sent_lens[counter]
             counter += 1
-        final.append(' '.join(flat_list[last:counter]))
+        output.append(' '.join(flat_list[last:counter]))
         last = counter
 
     predictions = predict(network = network, 
