@@ -171,8 +171,16 @@ def predict_arrays(network: torch.nn.Module,
     
     flat_list = [item for sublist in a for item in sublist]
     sentences = [word_tokenize(sentence) for sentence in flat_list]
-    output = [' '.join(flat_list[i:i+e]) if e > 1 else flat_list[i] for i, e in enumerate(part_lens)]
-    
+    last = 0
+    monta = 0
+    counter = 0
+    final = []
+    for row in part_lens:
+        for i in range(row):
+            monta += sent_lens[counter]
+            counter += 1
+        final.append(' '.join(flat_list[last:counter]))
+    last = counter
     predictions = predict(network = network, 
                           sentences = sentences,
                           transformer_tokenizer = transformer_tokenizer,
