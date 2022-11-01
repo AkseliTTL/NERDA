@@ -169,7 +169,7 @@ def predict_arrays(network: torch.nn.Module,
     part_lens = [len(i) for i in a]
     flat_list = [item for sublist in a for item in sublist]
     sentences = [word_tokenize(sentence) for sentence in flat_list]
-    output = [' '.join(flat_list[i:i+e]) if i > e else flat_list[i] for i, e in enumerate(part_lens)]
+    output = [' '.join(flat_list[i:i+e]) if e > 1 else flat_list[i] for i, e in enumerate(part_lens)]
     
     predictions = predict(network = network, 
                           sentences = sentences,
