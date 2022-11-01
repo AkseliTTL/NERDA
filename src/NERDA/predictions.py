@@ -183,7 +183,9 @@ def predict_arrays(network: torch.nn.Module,
                           pad_sequences = pad_sequences,
                           tag_encoder = tag_encoder,
                           tag_outside = tag_outside)
-
+                          
+    flat_list = [item for sublist in predictions for item in sublist]
+    predictions = [' '.join(flat_list[i:i+e]) if e > 1 else flat_list[i] for i, e in enumerate(part_lens)]
     return output, predictions
 
 def predict_text(network: torch.nn.Module, 
