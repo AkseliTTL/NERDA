@@ -13,7 +13,7 @@ from locale import normalize
 from tracemalloc import take_snapshot
 from NERDA.datasets import get_conll_data
 from NERDA.networks import NERDANetwork
-from NERDA.predictions import predict, predict_text
+from NERDA.predictions import predict, predict_arrays, predict_text
 from NERDA.performance import compute_f1_scores, compute_roc_auc_score, flatten
 from NERDA.training import train_model
 import pandas as pd
@@ -309,6 +309,38 @@ class NERDA:
             predicted tag/entity per word token.
         """
         return predict(network = self.network, 
+                       sentences = sentences,
+                       transformer_tokenizer = self.transformer_tokenizer,
+                       transformer_config = self.transformer_config,
+                       max_len = self.max_len,
+                       device = self.device,
+                       tag_encoder = self.tag_encoder,
+                       tag_outside = self.tag_outside,
+                       return_confidence = return_confidence,
+                       return_tensors = return_tensors,
+                       **kwargs)
+
+    def predict_arrays(self, sentences: List[List[str]],
+                return_confidence: bool = False,
+                return_tensors: bool = False,
+                **kwargs) -> List[List[str]]:
+        """Predict Named Entities in Word-Tokenized Sentences
+
+        Predicts word-tokenized sentences with trained model.
+
+        Args:
+            sentences (List[List[str]]): word-tokenized sentences.
+            kwargs: arbitrary keyword arguments. For instance
+                'batch_size' and 'num_workers'.
+            return_confidence (bool, optional): if True, return
+                confidence scores for all predicted tokens. Defaults
+                to False.
+
+        Returns:
+            List[List[str]]: Predicted tags for sentences - one
+            predicted tag/entity per word token.
+        """
+        return predict_arrays(network = self.network, 
                        sentences = sentences,
                        transformer_tokenizer = self.transformer_tokenizer,
                        transformer_config = self.transformer_config,
