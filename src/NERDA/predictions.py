@@ -3,6 +3,7 @@ This section covers functionality for computing predictions
 with a [NERDA.models.NERDA][] model.
 """
 
+from re import S
 from NERDA.preprocessing import create_dataloader
 import torch
 import numpy as np
@@ -167,6 +168,7 @@ def predict_arrays(network: torch.nn.Module,
 
     a = [sent_tokenize(sentence) for sentence in sentences]
     part_lens = [len(i) for i in a]
+    
     flat_list = [item for sublist in a for item in sublist]
     sentences = [word_tokenize(sentence) for sentence in flat_list]
     output = [' '.join(flat_list[i:i+e]) if e > 1 else flat_list[i] for i, e in enumerate(part_lens)]
@@ -183,10 +185,23 @@ def predict_arrays(network: torch.nn.Module,
                           pad_sequences = pad_sequences,
                           tag_encoder = tag_encoder,
                           tag_outside = tag_outside)
-                          
+
+    sent_lens = [len(s) for s in sentences]
     flat_list = [item for sublist in predictions for item in sublist]
-    predictions = [' '.join(flat_list[i:i+e]) if e > 1 else flat_list[i] for i, e in enumerate(part_lens)]
-    return output, predictions
+    #predictions = [' '.join(flat_list[i+sent_lens[i-1]:i+e]) if e > 1 and i > 0 else ' '.join(flat_list[i:i+e]) if e > 1 and i == 0 else flat_list[i] for i, e in enumerate(sent_lens)]
+    last = 0
+    num_of = -1
+    counter = 0
+    final = []
+
+    for row in part_lens:
+        for i in range(row):
+            num_of += sent_lens[counter+i]
+            counter += 1
+        final.append(' '.join(flat_list[last:num_of]))
+        last = num_of
+
+    return output, final
 
 def predict_text(network: torch.nn.Module, 
                  text: str,
