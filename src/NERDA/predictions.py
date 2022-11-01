@@ -171,6 +171,7 @@ def predict_arrays(network: torch.nn.Module,
     
     flat_list = [item for sublist in a for item in sublist]
     sentences = [word_tokenize(sentence) for sentence in flat_list]
+    sent_lens = [len(s) for s in sentences]
     last = 0
     monta = 0
     counter = 0
@@ -181,7 +182,7 @@ def predict_arrays(network: torch.nn.Module,
             counter += 1
         final.append(' '.join(flat_list[last:counter]))
         last = counter
-        
+
     predictions = predict(network = network, 
                           sentences = sentences,
                           transformer_tokenizer = transformer_tokenizer,
@@ -195,7 +196,6 @@ def predict_arrays(network: torch.nn.Module,
                           tag_encoder = tag_encoder,
                           tag_outside = tag_outside)
 
-    sent_lens = [len(s) for s in sentences]
     flat_list = [item for sublist in predictions for item in sublist]
     #predictions = [' '.join(flat_list[i+sent_lens[i-1]:i+e]) if e > 1 and i > 0 else ' '.join(flat_list[i:i+e]) if e > 1 and i == 0 else flat_list[i] for i, e in enumerate(sent_lens)]
     last = 0
