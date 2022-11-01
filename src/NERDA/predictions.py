@@ -180,7 +180,8 @@ def predict_arrays(network: torch.nn.Module,
             monta += sent_lens[counter]
             counter += 1
         final.append(' '.join(flat_list[last:counter]))
-    last = counter
+        last = counter
+        
     predictions = predict(network = network, 
                           sentences = sentences,
                           transformer_tokenizer = transformer_tokenizer,
