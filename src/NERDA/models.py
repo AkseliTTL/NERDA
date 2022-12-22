@@ -351,6 +351,7 @@ class NERDA:
                              return_accuracy: bool=False,
                              return_confusion: bool=False,
                              return_prob_distr: bool=False,
+                             labels = labels,
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
@@ -376,11 +377,12 @@ class NERDA:
         """
         sm = torch.nn.Softmax(dim=1)
         y_true = dataset.get('tags')
-        self.tag_scheme.append('O') 
+        #self.tag_scheme.append('O') 
         if return_confusion:
             tags_predicted = self.predict(sentences=dataset.get('sentences'),
                                       **kwargs)
-            cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = self.tag_scheme, normalize='true')
+            cm = confusion_matrix(flatten(y_true), flatten(tags_predicted), labels = labels, normalize='true')
+            #self.tag_scheme.remove('O') 
             return cm
         if return_prob_distr:
             '''
