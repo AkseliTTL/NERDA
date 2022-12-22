@@ -376,7 +376,7 @@ class NERDA:
         """
         sm = torch.nn.Softmax(dim=1)
         y_true = dataset.get('tags')
-
+        self.tag_scheme.append('O') 
         if return_confusion:
             tags_predicted = self.predict(sentences=dataset.get('sentences'),
                                       **kwargs)
