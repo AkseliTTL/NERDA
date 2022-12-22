@@ -351,7 +351,7 @@ class NERDA:
                              return_accuracy: bool=False,
                              return_confusion: bool=False,
                              return_prob_distr: bool=False,
-                             labels = labels,
+                             labels = List[str],
                              **kwargs) -> pd.DataFrame:
         """Evaluate Performance
 
