@@ -17,6 +17,8 @@ def train(model, data_loader, optimizer, device, scheduler, n_tags, epoch, logge
     for i, dl in enumerate(tqdm(data_loader, total=len(data_loader)), start=1):
         optimizer.zero_grad()
         outputs = model(**dl)
+        if i < 2:
+            print(dl.get('target_tags'))
         loss = compute_loss(outputs, 
                             dl.get('target_tags'),
                             dl.get('masks'), 
