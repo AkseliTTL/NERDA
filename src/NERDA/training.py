@@ -169,8 +169,9 @@ def train_model(network,
         valid_loss = validate(network, dl_validate, device, n_tags, epoch + 1, logger=logger)
 
         print(f"Train Loss = {train_loss} Valid Loss = {valid_loss}")
-        writer.add_scalar('Epoch Loss/train', train_loss, epoch + 1)
-        writer.add_scalar('Epoch Loss/valid', valid_loss, epoch + 1)
+        if logger:
+            writer.add_scalar('Epoch Loss/train', train_loss, epoch + 1)
+            writer.add_scalar('Epoch Loss/valid', valid_loss, epoch + 1)
         if valid_loss < best_valid_loss:
             best_parameters = network.state_dict()            
             best_valid_loss = valid_loss
