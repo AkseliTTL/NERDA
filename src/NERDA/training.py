@@ -158,7 +158,8 @@ def train_model(network,
 
     train_losses = []
     best_valid_loss = np.inf
-    writer = SummaryWriter('/tb_logs')
+    if logger:
+        writer = SummaryWriter('/tb_logs')
     for epoch in range(epochs):
         
         print('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
